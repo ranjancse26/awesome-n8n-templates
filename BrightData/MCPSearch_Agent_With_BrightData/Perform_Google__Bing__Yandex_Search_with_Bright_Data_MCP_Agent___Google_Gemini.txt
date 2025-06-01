@@ -1,0 +1,488 @@
+{
+  "name": "Perform Google, Bing, Yandex Search with Bright Data MCP Agent & Google Gemini",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1300,
+        300
+      ],
+      "id": "80b9e843-974a-4a93-871f-3ead444d1757",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-mcp.mcpClient",
+      "typeVersion": 1,
+      "position": [
+        -1080,
+        300
+      ],
+      "id": "2debe6c6-80ef-4fba-a40d-fcfd8a09eefa",
+      "name": "Bright Data MCP Client List Tools",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "JtatFSfA2kkwctYa",
+          "name": "MCP Client (STDIO) account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "items[0].binary = {\n  data: {\n    data: new Buffer(JSON.stringify(items[0].json, null, 2)).toString('base64')\n  }\n};\nreturn items;"
+      },
+      "name": "Create a binary data",
+      "type": "n8n-nodes-base.function",
+      "position": [
+        180,
+        220
+      ],
+      "typeVersion": 1,
+      "id": "0b66f5bb-66bb-41cf-b165-552d5b169dce"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Perform a Google Search and Scrape the Google Search Result",
+        "operation": "executeTool",
+        "toolName": "search_engine",
+        "toolParameters": "={\n    \"query\": \"{{ $json.query }}\",\n    \"engine\": \"google\"\n} "
+      },
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        600
+      ],
+      "id": "8516c6d6-fcae-42ab-8921-9f1d5500f73b",
+      "name": "MCP Client for Google Search",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "JtatFSfA2kkwctYa",
+          "name": "MCP Client (STDIO) account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "219c5e66-e167-44c3-bc65-612c70e8d4a1",
+              "name": "query",
+              "value": "Bright Data",
+              "type": "string"
+            },
+            {
+              "id": "2b9b0541-5c5e-446f-aeaf-8c9ce00dfa00",
+              "name": "action",
+              "value": "Perform a google search",
+              "type": "string"
+            },
+            {
+              "id": "bcc3ce2a-3708-4b6f-8ddd-3b5e611c63d0",
+              "name": "webhook_notification_url",
+              "value": "https://webhook.site/24878284-919d-4d39-bff0-5f36bfae17b6",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -860,
+        300
+      ],
+      "id": "a17ff821-c508-4b61-8d35-e7f1580e5bb1",
+      "name": "Set the Input Fields"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Perform a Bing Search and Scrape the Bing Search Result",
+        "operation": "executeTool",
+        "toolName": "search_engine",
+        "toolParameters": "{\n    \"query\": \"{{ $json.query }}\",\n    \"engine\": \"bing\"\n} "
+      },
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        600
+      ],
+      "id": "42639030-338c-4d30-a2e0-a5aaa9325191",
+      "name": "MCP Client for Bing Search",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "JtatFSfA2kkwctYa",
+          "name": "MCP Client (STDIO) account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Perform a Yandex Search and Scrape the Yandex Search Result",
+        "operation": "executeTool",
+        "toolName": "search_engine",
+        "toolParameters": "{\n    \"query\": \"{{ $json.query }}\",\n    \"engine\": \"yandex\"\n} "
+      },
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        600
+      ],
+      "id": "18f1374e-2516-481c-9fed-3c8757a21296",
+      "name": "MCP Client for Yandex Search",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "JtatFSfA2kkwctYa",
+          "name": "MCP Client (STDIO) account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.action }}\n\nMake sure to output the response as returned by th specific tool.",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -600,
+        300
+      ],
+      "id": "ff15f988-5f23-4a22-b2fb-25bdd558fce4",
+      "name": "Bright Data Search AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        600
+      ],
+      "id": "cd255a57-2260-4781-a9b1-e38a4d224572",
+      "name": "Google Gemini Chat Model for Search Agent",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YeO7dHZnuGBVQKVZ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "d:\\Scraped-Search-Results.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        420,
+        220
+      ],
+      "id": "51db57ef-8626-4268-b377-cd95021537c8",
+      "name": "Write the search result to disk"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Set the Input Fields').item.json.webhook_notification_url }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "response",
+              "value": "={{ $json.output.search_response }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        180,
+        420
+      ],
+      "id": "afa11162-6e5f-48ee-81a9-120eebf79a72",
+      "name": "Webhook for clean data extractor"
+    },
+    {
+      "parameters": {
+        "content": "## Disclaimer\nThis template is only available on n8n self-hosted as it's making use of the community node for MCP Client.",
+        "height": 120,
+        "width": 440,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        120
+      ],
+      "id": "07ea15dc-d54f-424c-bb75-27054be6996d",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## LLM Usages\n\nGoogle Gemini LLM is being utilized for the structured data extraction handling.",
+        "height": 220,
+        "width": 440,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -860,
+        20
+      ],
+      "id": "8ed88da4-cfd8-4c27-a737-1c718143e1a4",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Logo\n\n\n![logo](https://images.seeklogo.com/logo-png/43/1/brightdata-logo-png_seeklogo-439974.png)\n",
+        "height": 360,
+        "width": 440,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1320,
+        -380
+      ],
+      "typeVersion": 1,
+      "id": "b533b59c-5007-4f87-a862-f2765be3d27b",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Note\n\nDeals with the Google, Bing, Yandex Search by leveraging the Bright Data MCP Client.\n\n**Please make sure to set the input fields**",
+        "height": 220,
+        "width": 440
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1320,
+        20
+      ],
+      "id": "17265f2a-5224-498c-bf50-36b87a1c3b22",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "text": "=You are a helpful AI assistant. Given the following search result, return a clean, human-readable information.\n\nRemove any HTML tags, Ignore irrelevant links, ads, navigation text, or footers.\n\nHere's the content -  {{ $json.output }}\n\nImportant - Do not output your own thoughts or suggestions.",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "search_response",
+              "description": "Search Response"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.1,
+      "position": [
+        -240,
+        300
+      ],
+      "id": "902a8d8e-d4ad-4934-8c4d-10c7b66aac3c",
+      "name": "Human Readable Data Extractor"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        500
+      ],
+      "id": "1eca092e-da55-4025-85d1-d1d715e23f83",
+      "name": "Google Gemini Chat Model for Human Readable Data Extractor",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YeO7dHZnuGBVQKVZ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Bright Data MCP Client List Tools",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bright Data MCP Client List Tools": {
+      "main": [
+        [
+          {
+            "node": "Set the Input Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a binary data": {
+      "main": [
+        [
+          {
+            "node": "Write the search result to disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client for Google Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Bright Data Search AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set the Input Fields": {
+      "main": [
+        [
+          {
+            "node": "Bright Data Search AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client for Bing Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Bright Data Search AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client for Yandex Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Bright Data Search AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bright Data Search AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Human Readable Data Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model for Search Agent": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Bright Data Search AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Human Readable Data Extractor": {
+      "main": [
+        [
+          {
+            "node": "Create a binary data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Webhook for clean data extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model for Human Readable Data Extractor": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Human Readable Data Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c83026b9-2099-40bb-aef5-2079dd7dfc0c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "885b4fb4a6a9c2cb5621429a7b972df0d05bb724c20ac7dac7171b62f1c7ef40"
+  },
+  "id": "XSN9T4R0IyqcV2gC",
+  "tags": [
+    {
+      "createdAt": "2025-04-09T01:31:00.558Z",
+      "updatedAt": "2025-04-09T01:31:00.558Z",
+      "id": "Kujft2FOjmOVQAmJ",
+      "name": "Engineering"
+    },
+    {
+      "createdAt": "2025-04-13T15:23:40.462Z",
+      "updatedAt": "2025-04-13T15:23:40.462Z",
+      "id": "ZOwtAMLepQaGW76t",
+      "name": "Building Blocks"
+    },
+    {
+      "createdAt": "2025-04-13T05:38:08.053Z",
+      "updatedAt": "2025-04-13T05:38:08.053Z",
+      "id": "ddPkw7Hg5dZhQu2w",
+      "name": "AI"
+    }
+  ]
+}
