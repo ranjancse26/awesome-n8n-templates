@@ -1,0 +1,791 @@
+{
+  "name": "Best Of Hacker News Structured Data Extract & Export with Google Gemini",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        -20
+      ],
+      "id": "fcdf95c5-e9d1-4fb7-a8da-1bc3e993739b",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6d263b7c-fa36-4e08-8bcf-ee7dc8663ca4",
+              "name": "search",
+              "value": "artificial-intelligence",
+              "type": "string"
+            },
+            {
+              "id": "b692f2a2-bfa0-4a85-8675-e739c1386db5",
+              "name": "zone",
+              "value": "web_unlocker1",
+              "type": "string"
+            },
+            {
+              "id": "95d7f25b-6c0c-4b4b-ad2b-0620d3feb0d9",
+              "name": "action",
+              "value": "search",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -280,
+        -20
+      ],
+      "id": "3f841add-f50b-452c-abee-04135849b3fa",
+      "name": "Set the Input Fields"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        840,
+        380
+      ],
+      "id": "d23ef9f6-dbc9-4ffb-a36a-f67a3430e8e1",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YeO7dHZnuGBVQKVZ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "=Analyze and Extract the structured data for the below content. \n\n {{ $json.data }}",
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"$schema\": \"http://json-schema.org/schema#\",\n  \"title\": \"BestOfShowHNSearchResult\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"query\": {\n      \"type\": \"string\",\n      \"description\": \"The search term used (e.g., \\\"artificial-intelligence\\\")\"\n    },\n    \"totalResults\": {\n      \"type\": \"integer\",\n      \"description\": \"Total number of matching items\"\n    },\n    \"page\": {\n      \"type\": \"integer\",\n      \"description\": \"Current page number\"\n    },\n    \"perPage\": {\n      \"type\": \"integer\",\n      \"description\": \"Number of items per page\"\n    },\n    \"results\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"id\": {\n            \"type\": \"string\",\n            \"description\": \"Unique identifier (e.g., HN item ID)\"\n          },\n          \"title\": {\n            \"type\": \"string\",\n            \"description\": \"Headline or title of the post\"\n          },\n          \"url\": {\n            \"type\": [\"string\", \"null\"],\n            \"format\": \"uri\",\n            \"description\": \"Original URL or null for internal HN posts\"\n          },\n          \"commentsUrl\": {\n            \"type\": \"string\",\n            \"format\": \"uri\",\n            \"description\": \"Link to the Hacker News comments page\"\n          },\n          \"points\": {\n            \"type\": \"integer\",\n            \"description\": \"Number of points (votes) received\"\n          },\n          \"commentsCount\": {\n            \"type\": \"integer\",\n            \"description\": \"Number of comments\"\n          },\n          \"submitter\": {\n            \"type\": \"string\",\n            \"description\": \"Username of the person who submitted\"\n          },\n          \"submittedAt\": {\n            \"type\": \"string\",\n            \"format\": \"date-time\",\n            \"description\": \"Timestamp of submission\"\n          },\n          \"tags\": {\n            \"type\": \"array\",\n            \"items\": { \"type\": \"string\" },\n            \"description\": \"Any tags or categories applied\"\n          }\n        },\n        \"required\": [\n          \"id\",\n          \"title\",\n          \"commentsUrl\",\n          \"points\",\n          \"commentsCount\",\n          \"submitter\",\n          \"submittedAt\"\n        ]\n      }\n    }\n  },\n  \"required\": [\"query\", \"totalResults\", \"page\", \"perPage\", \"results\"]\n}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        820,
+        180
+      ],
+      "id": "ce396e75-a439-48c5-8b82-93913bc229be",
+      "name": "Structured Data Extractor"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1NgcVLjlJRSeCr8iUvD9EASTzfcI41vfurS3r3RDNf9I",
+          "mode": "list",
+          "cachedResultName": "Best of Hacker News",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NgcVLjlJRSeCr8iUvD9EASTzfcI41vfurS3r3RDNf9I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NgcVLjlJRSeCr8iUvD9EASTzfcI41vfurS3r3RDNf9I/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Id": "={{ $json.id }}",
+            "Title": "={{ $json.title }}",
+            "URL": "={{ $json.url }}",
+            "Comments URL": "={{ $json.commentsUrl }}",
+            "Points": "={{ $json.points }}",
+            "Comments Count": "={{ $json.commentsCount }}",
+            "Submitter": "={{ $json.submittedAt }}",
+            "Submitted At": "={{ $json.submittedAt }}",
+            "Tags": "={{ $json.tags }}"
+          },
+          "matchingColumns": [
+            "Id"
+          ],
+          "schema": [
+            {
+              "id": "Id",
+              "displayName": "Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Comments URL",
+              "displayName": "Comments URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Points",
+              "displayName": "Points",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Comments Count",
+              "displayName": "Comments Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitter",
+              "displayName": "Submitter",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1400,
+        180
+      ],
+      "id": "7a229002-6aba-4e52-8c9d-e4457e200082",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Zjoxh2BUZ6VXGQhA",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.first().json.output.results"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        180
+      ],
+      "id": "d8723335-e030-442b-90a7-497df516b72b",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "content": "## Google Sheet\n\nMake sure to have the following column names on your google sheet.\n\n1. Id\t\n2. Title\n3. URL\t\n4. Comments URL\n5. Points\n6. Comments Count\t\n7. Submitter\n8. Submitted At\n9. Tags",
+        "height": 340,
+        "width": 540,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        420,
+        -540
+      ],
+      "typeVersion": 1,
+      "id": "24a87c94-580d-4577-b56e-85b1f10234da",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## LLM Usages\n\nGoogle Gemini LLM is being utilized for the structured data extraction handling.",
+        "height": 300,
+        "width": 440,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -500
+      ],
+      "id": "79945790-1dc4-4d9e-9310-86d45ffd3cdf",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.brightdata.com/request",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "zone",
+              "value": "={{ $('Set the Input Fields').item.json.zone }}"
+            },
+            {
+              "name": "url",
+              "value": "={{ $json.formatted_url }}"
+            },
+            {
+              "name": "format",
+              "value": "raw"
+            },
+            {
+              "name": "data_format",
+              "value": "markdown"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        580,
+        180
+      ],
+      "id": "88a1d63c-8fb1-4206-a627-26d36c285992",
+      "name": "Perform Best of Hacker News Web Request",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "kdbqXuxIR8qIxF7y",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "search",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ac4f7a47-920f-4269-905f-659315e20732"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f7d7daf2-d2d0-4d94-90b5-192182e76011",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "today",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "09961d24-816b-4c24-b3ad-09b2c4b3ec57",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "yesterday",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "92c25e76-3581-4390-87ae-0d93eb4615f1",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "week",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1cc9fde6-3248-46a6-9f68-6f4d3fb759fc",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "all",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -60,
+        -60
+      ],
+      "id": "bd6aa157-8ea1-4c50-b10c-7a00847bd1c2",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fa2d2bfb-021f-47fc-a600-ed265bc1dc19",
+              "name": "formatted_url",
+              "value": "=https://bestofshowhn.com/today",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        280,
+        20
+      ],
+      "id": "fba9a301-338b-4d9a-a6f0-d674e1056fce",
+      "name": "Set the URL for today"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fa2d2bfb-021f-47fc-a600-ed265bc1dc19",
+              "name": "formatted_url",
+              "value": "=https://bestofshowhn.com/yesterday",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        280,
+        180
+      ],
+      "id": "169f8429-ebdc-45f7-a4ee-dabe9490f023",
+      "name": "Set the URL for yesterday"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fa2d2bfb-021f-47fc-a600-ed265bc1dc19",
+              "name": "formatted_url",
+              "value": "=https://bestofshowhn.com/week",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        280,
+        360
+      ],
+      "id": "9a35d354-a91a-476a-9670-dcc3fce75f9c",
+      "name": "Set the URL for week"
+    },
+    {
+      "parameters": {
+        "content": "## Logo\n\n\n![logo](https://images.seeklogo.com/logo-png/43/1/brightdata-logo-png_seeklogo-439974.png)\n",
+        "height": 340,
+        "width": 400,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -500,
+        -700
+      ],
+      "typeVersion": 1,
+      "id": "2e4fb19f-98c2-4b51-97c8-283032918f4e",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Note\n\nDeals with the Best of Hacker News structured data extraction based on the set action with search, today, yesterday, week, all\n\n**Please make sure to set the input fields node with the action, Bright Data zone name**\n\n",
+        "height": 240,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        -340
+      ],
+      "id": "14388ec7-ad3b-4248-bda6-eb7cf63dab43",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fa2d2bfb-021f-47fc-a600-ed265bc1dc19",
+              "name": "formatted_url",
+              "value": "=https://bestofshowhn.com/search?q={{ encodeURI($json.search) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        280,
+        -140
+      ],
+      "id": "0eb9e9a0-1498-4b5e-ad1a-d57059eda43e",
+      "name": "Set the URL for search"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fa2d2bfb-021f-47fc-a600-ed265bc1dc19",
+              "name": "formatted_url",
+              "value": "=https://bestofshowhn.com/all",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        280,
+        540
+      ],
+      "id": "16011ca2-ec0e-48a7-9bf5-e1923c29607c",
+      "name": "Set the URL for all"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set the Input Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set the Input Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Data Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Data Extractor": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perform Best of Hacker News Web Request": {
+      "main": [
+        [
+          {
+            "node": "Structured Data Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Set the URL for search",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set the URL for today",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set the URL for yesterday",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set the URL for week",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set the URL for all",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set the URL for today": {
+      "main": [
+        [
+          {
+            "node": "Perform Best of Hacker News Web Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set the URL for yesterday": {
+      "main": [
+        [
+          {
+            "node": "Perform Best of Hacker News Web Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set the URL for week": {
+      "main": [
+        [
+          {
+            "node": "Perform Best of Hacker News Web Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set the URL for search": {
+      "main": [
+        [
+          {
+            "node": "Perform Best of Hacker News Web Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set the URL for all": {
+      "main": [
+        [
+          {
+            "node": "Perform Best of Hacker News Web Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a1a4b103-d39c-4f97-a7c5-48fd69cc6463",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "885b4fb4a6a9c2cb5621429a7b972df0d05bb724c20ac7dac7171b62f1c7ef40"
+  },
+  "id": "VqGKkWVyUkYpQCSe",
+  "tags": [
+    {
+      "createdAt": "2025-04-09T01:31:00.558Z",
+      "updatedAt": "2025-04-09T01:31:00.558Z",
+      "id": "Kujft2FOjmOVQAmJ",
+      "name": "Engineering"
+    },
+    {
+      "createdAt": "2025-04-13T15:23:40.462Z",
+      "updatedAt": "2025-04-13T15:23:40.462Z",
+      "id": "ZOwtAMLepQaGW76t",
+      "name": "Building Blocks"
+    },
+    {
+      "createdAt": "2025-04-13T05:38:08.053Z",
+      "updatedAt": "2025-04-13T05:38:08.053Z",
+      "id": "ddPkw7Hg5dZhQu2w",
+      "name": "AI"
+    }
+  ]
+}
